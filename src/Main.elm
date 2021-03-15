@@ -8,22 +8,49 @@ import Shapes.Line exposing(..)
 import Characters.Player as Player
 import Array exposing (Array)
 
+type alias Memory =
+    { x : Int
+    , y : Float
+    , count : Int 
+    }
+
 main =
-  game view update 0
+  game view update (Memory 0 0 0)
 
 
-view computer offset =
-    testVeiw (Position 0 0) computer.screen (floor offset)
+view computer memory =
+    testVeiw (Position 0 0) computer.screen memory
 
-update computer offset =
-  if floor offset > segments * 4 then
-    0
+update : Computer -> Memory -> Memory
+update computer memory =
+  if memory.count == 0 then 
+    Memory
+    (
+      toX computer.keyboard
+      |> floor
+      |> (+) memory.x
+      |> (+) (4 * segments) 
+      |> modBy (4 * segments)
+    )
+    (
+      toY computer.keyboard
+      |> (*) yMove
+      |> (+) memory.y
+    )
+    (
+      modBy updateCount (memory.count + 1)
+    )
   else
-    offset + 0.1
+    Memory
+      memory.x
+      memory.y 
+      (
+        modBy updateCount (memory.count + 1)
+      )
 
 
-testVeiw : Position -> Screen -> Int -> List(Shape)
-testVeiw pos screen offset=
+testVeiw : Position -> Screen -> Memory -> List(Shape)
+testVeiw pos screen memory=
   let 
     outerSize = (floor (min screen.height screen.width) - 100)
     outerRect = Rect.square pos outerSize
@@ -34,15 +61,12 @@ testVeiw pos screen offset=
     [
       fillScreen backgroundColor screen
       ,CRect.drawConnectedRect blue shapeColor backgroundColor segments lineWidthConst rect
-    ] 
-    ++
-    (
-      CRect.linesBetweenConnectedPairs 0 segments (CRect.ConnectedRect outerRect innerRect)
+      ,CRect.linesBetweenConnectedPairs (memory.y) segments (CRect.ConnectedRect outerRect innerRect)
        |> Array.fromList
-       |> Array.slice offset (offset + 1)
-       |> Array.toList
-       |> List.map (Player.drawPlayer yellow lineWidthConst)
-  )
+       |> Array.get memory.x
+       |> Maybe.withDefault (Line (Position 0 0) (Position 0 0)) 
+       |> (Player.drawPlayer yellow lineWidthConst)
+    ]
 
 fillScreen : Color -> Screen -> Shape
 fillScreen color screen =
@@ -57,4 +81,10 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 10
+segments = 4
+
+updateCount : Int
+updateCount = 3
+
+yMove : Float
+yMove = 0.2
