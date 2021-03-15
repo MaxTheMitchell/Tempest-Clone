@@ -1,9 +1,7 @@
-module Shapes.Line exposing(Line, drawLine, linesBetweenLines)
+module Shapes.Line exposing(Line, drawLine,lineBetweenlines, linesBetweenLines, lineCenter, slope)
 
 import Playground exposing(..)
-import Shapes.Position exposing(Position)
-import Html exposing (li)
-
+import Shapes.Position as Position exposing(Position)
 type alias  Line =
   { pos1 : Position
   , pos2 : Position
@@ -25,15 +23,37 @@ linesBetweenLines amount line1 line2 =
 positionsOnLine : Int -> Line -> List(Position)
 positionsOnLine amount line =
   let 
-    spacing p1 p2 =
-      (p1 - p2)//amount
-        |> abs 
+    percent = 1 / (toFloat amount)
   in
-    List.range 0 amount
-      |> List.map (\i -> Position 
-        (i*(spacing line.pos1.x line.pos2.x) + (min line.pos1.x line.pos2.x)) 
-        (i*(spacing line.pos1.y line.pos2.y) + (min line.pos1.y line.pos2.y))
-      )
+    List.range 1 amount
+      |> List.map toFloat
+      |> List.map (\i -> positionOnLine (i*percent) line)
+
+
+lineBetweenlines : Float -> Line -> Line -> Line
+lineBetweenlines percent line1 line2 = 
+  Line
+    (positionOnLine percent line1)
+    (positionOnLine percent line2)  
+
+positionOnLine : Float -> Line -> Position
+positionOnLine percent line =
+  let
+    posCal p1 p2 =
+      p1 - p2
+        |> toFloat
+        |> (*) percent
+        |> floor
+        |> (+) p2
+  in
+    Position (posCal line.pos1.x line.pos2.x) (posCal line.pos1.y line.pos2.y)
+
+
+invertLine : Line -> Line
+invertLine line =
+  Line 
+    (Position.invertPos line.pos1)
+    (Position.invertPos line.pos2)
 
 lineAngle : Line -> Float
 lineAngle line =
@@ -50,6 +70,10 @@ lineCenter line =
       (p1 + p2) // 2
   in  
     Position (posCenter line.pos1.x line.pos2.x) (posCenter line.pos1.y line.pos2.y) 
+
+slope : Line -> Position
+slope line = 
+  Position (line.pos1.x - line.pos2.x)  (line.pos1.y - line.pos2.y)
 
 lineSize : Line -> Number
 lineSize line =

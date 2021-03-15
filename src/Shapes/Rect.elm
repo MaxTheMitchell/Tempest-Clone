@@ -28,35 +28,16 @@ drawEmptyRect color lineWidth rect =
     |> List.map (drawLine color lineWidth)
     |> group
 
-drawConnectedRect : Color -> Color -> Color -> Int -> Number  -> Rect -> Rect -> Shape
-drawConnectedRect color fillColor backgroundColor amount lineWidth innerRect outerRect =
-  [
-    drawRect fillColor outerRect
-    ,drawRect backgroundColor innerRect
-    ,drawEmptyRect color lineWidth outerRect
-    ,drawEmptyRect color lineWidth innerRect
-  ] ++ drawLinesBetweenRects color amount lineWidth innerRect outerRect
-    |> group
-
-drawLinesBetweenRects : Color -> Int -> Number -> Rect -> Rect -> List(Shape)
-drawLinesBetweenRects color amount lineWidth rect1 rect2 =
-  List.map (drawLine color lineWidth) (linesBetweenRects amount rect1 rect2)
-
-linesBetweenRects : Int -> Rect -> Rect -> List(Line)
-linesBetweenRects amount rect1 rect2 =
-    List.map2 (linesBetweenLines amount) (edges rect1) (edges rect2)
-      |> List.concat
-
 edges : Rect -> List(Line)
 edges rect =
   let
     rectCorner i = getCorner i rect
   in
   [
-    Line (rectCorner 0) (rectCorner 1)
-    , Line (rectCorner 1) (rectCorner 2)
-    , Line (rectCorner 2) (rectCorner 3)
-    , Line (rectCorner 3) (rectCorner 0) 
+    Line (rectCorner 1) (rectCorner 2)
+    , Line (rectCorner 0) (rectCorner 1)
+    , Line (rectCorner 3) (rectCorner 0)
+    , Line (rectCorner 2) (rectCorner 3) 
   ]
 
 getCorner : Int -> Rect -> Position

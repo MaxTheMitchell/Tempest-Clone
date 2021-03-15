@@ -1,4 +1,4 @@
-module Shapes.Position exposing(Position)
+module Shapes.Position exposing(Position, invertPos)
 
 type alias Position =
   { 
@@ -6,4 +6,6 @@ type alias Position =
   , y : Int
   }
 
-
+invertPos : Position -> Position
+invertPos pos =
+  Position pos.y pos.x
