@@ -5,17 +5,16 @@ import Shapes.Rect as Rect
 import Shapes.ConnectedRect as CRect
 import Shapes.Position exposing(Position)
 import Shapes.Line exposing(..)
-import Characters.Player as Player
+import Characters.Player as Player exposing(Player)
 import Array exposing (Array)
 
 type alias Memory =
-    { x : Int
-    , y : Float
+    { player : Player
     , count : Int 
     }
 
 main =
-  game view update (Memory 0 0 0)
+  game view update (Memory (Player 0 0) 0)
 
 
 view computer memory =
@@ -23,30 +22,28 @@ view computer memory =
 
 update : Computer -> Memory -> Memory
 update computer memory =
-  if memory.count == 0 then 
-    Memory
-    (
-      toX computer.keyboard
-      |> floor
-      |> (+) memory.x
-      |> (+) (4 * segments) 
-      |> modBy (4 * segments)
-    )
-    (
-      toY computer.keyboard
-      |> (*) yMove
-      |> (+) memory.y
-    )
-    (
-      modBy updateCount (memory.count + 1)
-    )
-  else
-    Memory
-      memory.x
-      memory.y 
-      (
-        modBy updateCount (memory.count + 1)
-      )
+  Memory
+  (
+    if memory.count == 0 then 
+      Player
+        (
+          toX computer.keyboard
+          |> floor
+          |> (+) memory.player.x
+          |> (+) (4 * segments) 
+          |> modBy (4 * segments)
+        )
+        (
+          toY computer.keyboard
+          |> (*) yMove
+          |> (+) memory.player.y
+        )
+    else
+      memory.player
+  )
+  (
+    modBy updateCount (memory.count + 1)
+  )
 
 
 testVeiw : Position -> Screen -> Memory -> List(Shape)
@@ -56,16 +53,12 @@ testVeiw pos screen memory=
     outerRect = Rect.square pos outerSize
     innerRect = Rect.square pos (floor (toFloat outerSize * 0.1))
 
-    rect = CRect.ConnectedRect outerRect innerRect
+    rect = CRect.ConnectedRect outerRect innerRect segments
   in
     [
       fillScreen backgroundColor screen
-      ,CRect.drawConnectedRect blue shapeColor backgroundColor segments lineWidthConst rect
-      ,CRect.linesBetweenConnectedPairs (memory.y) segments (CRect.ConnectedRect outerRect innerRect)
-       |> Array.fromList
-       |> Array.get memory.x
-       |> Maybe.withDefault (Line (Position 0 0) (Position 0 0)) 
-       |> (Player.drawPlayer yellow lineWidthConst)
+      ,CRect.drawConnectedRect shapeColor backgroundColor backgroundColor lineWidthConst rect
+      ,Player.drawPlayer yellow lineWidthConst rect memory.player
     ]
 
 fillScreen : Color -> Screen -> Shape
@@ -81,10 +74,10 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 4
+segments = 3
 
 updateCount : Int
 updateCount = 3
 
 yMove : Float
-yMove = 0.2
+yMove = 0.1
