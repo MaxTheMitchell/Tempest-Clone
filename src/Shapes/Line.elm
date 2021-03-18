@@ -7,12 +7,12 @@ type alias  Line =
   , pos2 : Position
   }
 
-drawLine : Color -> Number -> Line -> Shape
+drawLine : Color -> Int -> Line -> Shape
 drawLine color width line =
   let
     center = lineCenter line  
   in
-    rectangle color width (lineSize line)
+    rectangle color (toFloat width) (lineSize line)
       |> rotate (lineAngle line)
       |> move (toFloat center.x) (toFloat center.y)
 
@@ -25,7 +25,7 @@ positionsOnLine amount line =
   let 
     percent = 1 / (toFloat amount)
   in
-    List.range 1 amount
+    List.range 0 amount
       |> List.map toFloat
       |> List.map (\i -> positionOnLine (i*percent) line)
 
@@ -63,6 +63,7 @@ lineAngle line =
 toDegrees : Float -> Float
 toDegrees rad =
    rad * 180 / pi
+   
 lineCenter : Line -> Position
 lineCenter line =
   let

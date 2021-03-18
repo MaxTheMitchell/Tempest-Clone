@@ -1,12 +1,11 @@
 module Main exposing(main, segments)
 
 import Playground exposing (..)
-import Shapes.Rect as Rect
-import Shapes.ConnectedRect as CRect
 import Shapes.Position exposing(Position)
 import Shapes.Line exposing(..)
 import Characters.Player as Player exposing(Player)
-import Array exposing (Array)
+import Shapes.Polygon as Poly
+import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
 
 type alias Memory =
     { player : Player
@@ -24,7 +23,7 @@ update : Computer -> Memory -> Memory
 update computer memory =
   Memory
   (
-    if memory.count == 0 then 
+    if modBy updateCount memory.count == 0 then 
       Player
         (
           toX computer.keyboard
@@ -41,31 +40,31 @@ update computer memory =
     else
       memory.player
   )
-  (
-    modBy updateCount (memory.count + 1)
-  )
+     (memory.count + 1)
 
 
 testVeiw : Position -> Screen -> Memory -> List(Shape)
-testVeiw pos screen memory=
+testVeiw pos screen memory =
   let 
     outerSize = (floor (min screen.height screen.width) - 100)
-    outerRect = Rect.square pos outerSize
-    innerRect = Rect.square pos (floor (toFloat outerSize * 0.1))
-
-    rect = CRect.ConnectedRect outerRect innerRect segments
+    outerRect = Poly.square pos outerSize
+    innerRect = Poly.square (Position 0 0) (floor (toFloat (outerSize) * 0.1))
+    rect = ConnectedPolygon segments innerRect outerRect
   in
     [
       fillScreen backgroundColor screen
-      ,CRect.drawConnectedRect shapeColor backgroundColor backgroundColor lineWidthConst rect
+      ,CPoly.drawConnectedPoly shapeColor lineWidthConst rect
       ,Player.drawPlayer yellow lineWidthConst rect memory.player
+      ,CPoly.linesBetweenConnectedPairs 0.5 rect 
+        |> List.map (Shapes.Line.drawLine green 3 )
+        |> group
     ]
 
 fillScreen : Color -> Screen -> Shape
 fillScreen color screen =
-  Rect.drawRect color (Rect.Rect (Position 0 0) (floor screen.width) (floor screen.height))
+  rectangle color screen.width screen.height
 
-lineWidthConst : Number
+lineWidthConst : Int
 lineWidthConst = 3
 
 shapeColor : Color
@@ -74,7 +73,7 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 3
+segments = 2
 
 updateCount : Int
 updateCount = 3
