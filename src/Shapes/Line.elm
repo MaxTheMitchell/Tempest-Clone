@@ -25,7 +25,7 @@ positionsOnLine amount line =
   let 
     percent = 1 / (toFloat amount)
   in
-    List.range 0 amount
+    List.range 1 amount
       |> List.map toFloat
       |> List.map (\i -> positionOnLine (i*percent) line)
 

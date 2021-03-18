@@ -47,17 +47,23 @@ testVeiw : Position -> Screen -> Memory -> List(Shape)
 testVeiw pos screen memory =
   let 
     outerSize = (floor (min screen.height screen.width) - 100)
-    outerRect = Poly.square pos outerSize
+    outerRect = Poly.rect pos outerSize (outerSize)
     innerRect = Poly.square (Position 0 0) (floor (toFloat (outerSize) * 0.1))
+    -- outerRect = [
+    --   (Position 0 250)
+    --   , (Position 250 -250)
+    --   , (Position -250 -250)]
+    
+    -- innerRect = [
+    --   (Position 0 100)
+    --   , (Position 50 -100)
+    --   , (Position -50 -100)]
     rect = ConnectedPolygon segments innerRect outerRect
   in
     [
       fillScreen backgroundColor screen
       ,CPoly.drawConnectedPoly shapeColor lineWidthConst rect
       ,Player.drawPlayer yellow lineWidthConst rect memory.player
-      ,CPoly.linesBetweenConnectedPairs 0.5 rect 
-        |> List.map (Shapes.Line.drawLine green 3 )
-        |> group
     ]
 
 fillScreen : Color -> Screen -> Shape
@@ -73,7 +79,7 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 2
+segments = 4
 
 updateCount : Int
 updateCount = 3

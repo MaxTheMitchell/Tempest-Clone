@@ -17,8 +17,8 @@ drawPlayer color size cPoly player =
     line = playerLine cPoly player
     slope = Line.slope line
     center = Position 
-      ((Line.lineCenter line).x - (floor ((toFloat slope.y ) * playerSize * -1))) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
-      ((Line.lineCenter line).y - (floor ((toFloat slope.x ) * playerSize)))
+      ((Line.lineCenter line).x + (floor ((toFloat slope.y ) * playerSize * -1))) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
+      ((Line.lineCenter line).y + (floor ((toFloat slope.x ) * playerSize)))
   in
     Playground.group 
       [

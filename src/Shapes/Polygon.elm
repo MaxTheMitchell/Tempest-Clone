@@ -18,7 +18,7 @@ toLines : Polygon -> List(Line)
 toLines poly = 
     [Maybe.withDefault (Position 0 0) (List.head poly)]
       |> (++) (Maybe.withDefault [] (List.tail poly))
-      |> (List.map2 Line poly)
+      |> (\l -> List.map2 Line l poly)
    
 getCorner : Int -> Polygon -> Position
 getCorner i poly =
