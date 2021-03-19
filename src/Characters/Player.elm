@@ -52,6 +52,7 @@ moveY dir speed player =
         |> toFloat 
         |> (*) speed
         |> (+) player.y
+        |> (bound 0 1)
     )
 
 playerLine : ConnectedPolygon -> Player -> Line
@@ -64,3 +65,12 @@ playerLine cPoly player =
 
 playerSize : Float
 playerSize = 0.2
+
+bound : Float -> Float -> Float -> Float
+bound min max val =
+  if min > val then
+    min
+  else if max < val then 
+    max
+  else
+    val
