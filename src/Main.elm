@@ -10,62 +10,49 @@ import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
 type alias Memory =
     { player : Player
     , count : Int 
+    , cPoly : ConnectedPolygon
     }
 
 main =
-  game view update (Memory (Player 0 0) 0)
+  let 
+    outerSize = 600
+    outerRect = Poly.rect (Position 0 0) outerSize (outerSize)
+    -- innerRect = Poly.square (Position 0 0) (floor (toFloat (outerSize) * 0.1))
+    -- outerRect = [
+    --   (Position -400 -400)
+    --   , (Position 400 -400)
+    --   , (Position 0 400)]
+    
+    innerRect = [
+       (Position -200 -200)
+       ,(Position 0 (200 - 346))
+      , (Position 200 -200)
+      , (Position 0 (346 - 200))
+      
+      ]
+    rect = ConnectedPolygon segments innerRect outerRect
+  in
+    game view update (Memory (Player 0 0) 0 rect)
 
 
 view computer memory =
-    testVeiw (Position 0 0) computer.screen memory
+    [
+      fillScreen backgroundColor computer.screen
+      ,CPoly.drawConnectedPoly shapeColor lineWidthConst memory.cPoly
+      ,Player.drawPlayer yellow lineWidthConst memory.cPoly memory.player
+    ]
 
 update : Computer -> Memory -> Memory
 update computer memory =
   Memory
-  (
-    if modBy updateCount memory.count == 0 then 
-      Player
-        (
-          toX computer.keyboard
-          |> floor
-          |> (+) memory.player.x
-          |> (+) segments 
-          |> modBy segments
-        )
-        (
-          toY computer.keyboard
-          |> (*) yMove
-          |> (+) memory.player.y
-        )
-    else
-      memory.player
-  )
-     (memory.count + 1)
-
-
-testVeiw : Position -> Screen -> Memory -> List(Shape)
-testVeiw pos screen memory =
-  let 
-    outerSize = (floor (min screen.height screen.width) - 100)
-    -- outerRect = Poly.rect pos outerSize (outerSize)
-    innerRect = Poly.square (Position 0 0) (floor (toFloat (outerSize) * 0.1))
-    outerRect = [
-      (Position -400 -400)
-      , (Position 400 -400)
-      , (Position 0 400)]
-    
-    -- innerRect = [
-    --   (Position -250 -250)
-    --   , (Position 250 -250)
-    --   , (Position 0 (433 - 250))
-    --   ]
-    rect = ConnectedPolygon segments innerRect outerRect
-  in
-    [
-      fillScreen backgroundColor screen
-      ,CPoly.drawConnectedPoly shapeColor lineWidthConst rect
-      ,Player.drawPlayer yellow lineWidthConst rect memory.player
-    ]
+    (
+      if modBy updateCount memory.count == 0 then 
+        Player.move computer.keyboard yMove memory.cPoly memory.player
+      else
+        memory.player
+    )
+    (memory.count + 1)
+    memory.cPoly
 
 fillScreen : Color -> Screen -> Shape
 fillScreen color screen =
@@ -80,7 +67,7 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 4*3*2
+segments = 4*3
 
 updateCount : Int
 updateCount = 3

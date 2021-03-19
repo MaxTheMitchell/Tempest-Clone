@@ -1,16 +1,16 @@
 module Characters.Player exposing(..)
 
-import Playground exposing(Shape, Number, Color)
+import Playground exposing(Shape, Color)
 import Shapes.Line as Line exposing(Line)
 import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
 import Shapes.Position as Position exposing(Position)
-import Array exposing (Array)
+import Playground exposing (Keyboard)
+import Array
 
 type alias Player =
     {x : Int
     , y : Float
     }
-
 drawPlayer : Color -> Int -> ConnectedPolygon -> Player -> Shape
 drawPlayer color size cPoly player =
   let 
@@ -25,6 +25,34 @@ drawPlayer color size cPoly player =
         Line.drawLine color size (Line line.pos1 center)
         ,Line.drawLine color size (Line line.pos2 center)
       ]
+
+move : Playground.Keyboard -> Float -> ConnectedPolygon -> Player -> Player
+move keyboard speed cPoly player =
+  player
+    |> (moveX (truncate (Playground.toX keyboard)) cPoly)
+    |> (moveY (truncate (Playground.toY keyboard)) speed)
+
+moveX : Int -> ConnectedPolygon -> Player -> Player
+moveX dir cPoly player = 
+  Player
+    (
+      dir
+        |> (+) player.x
+        |> (+) cPoly.segments 
+        |> modBy cPoly.segments
+    )
+    player.y
+
+moveY : Int -> Float -> Player -> Player
+moveY dir speed player = 
+  Player
+    player.x
+    (
+      dir
+        |> toFloat 
+        |> (*) speed
+        |> (+) player.y
+    )
 
 playerLine : ConnectedPolygon -> Player -> Line
 playerLine cPoly player =
