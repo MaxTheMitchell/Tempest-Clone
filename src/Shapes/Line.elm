@@ -1,4 +1,4 @@
-module Shapes.Line exposing(Line, drawLine,lineBetweenlines, linesBetweenLines, lineCenter, slope)
+module Shapes.Line exposing(..)
 
 import Playground exposing(..)
 import Shapes.Position as Position exposing(Position)
@@ -12,7 +12,7 @@ drawLine color width line =
   let
     center = lineCenter line  
   in
-    rectangle color (toFloat width) (lineSize line)
+    rectangle color (toFloat width) (toFloat (lineSize line))
       |> rotate (lineAngle line)
       |> move (toFloat center.x) (toFloat center.y)
 
@@ -28,7 +28,6 @@ positionsOnLine amount line =
     List.range 1 amount
       |> List.map toFloat
       |> List.map (\i -> positionOnLine (i*percent) line)
-
 
 lineBetweenlines : Float -> Line -> Line -> Line
 lineBetweenlines percent line1 line2 = 
@@ -76,7 +75,13 @@ slope : Line -> Position
 slope line = 
   Position (line.pos1.x - line.pos2.x)  (line.pos1.y - line.pos2.y)
 
-lineSize : Line -> Number
+sumLines : List(Line) -> Int 
+sumLines list =
+  list
+    |> List.map lineSize
+    |> List.sum 
+
+lineSize : Line -> Int
 lineSize line =
     let
       sqrDiff p1 p2 =
@@ -85,4 +90,5 @@ lineSize line =
       (sqrDiff line.pos1.x line.pos2.x) + (sqrDiff line.pos1.y line.pos2.y)
         |> toFloat
         |> sqrt
+        |> floor
 

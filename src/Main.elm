@@ -29,8 +29,8 @@ update computer memory =
           toX computer.keyboard
           |> floor
           |> (+) memory.player.x
-          |> (+) (4 * segments) 
-          |> modBy (4 * segments)
+          |> (+) segments 
+          |> modBy segments
         )
         (
           toY computer.keyboard
@@ -47,17 +47,18 @@ testVeiw : Position -> Screen -> Memory -> List(Shape)
 testVeiw pos screen memory =
   let 
     outerSize = (floor (min screen.height screen.width) - 100)
-    outerRect = Poly.rect pos outerSize (outerSize)
+    -- outerRect = Poly.rect pos outerSize (outerSize)
     innerRect = Poly.square (Position 0 0) (floor (toFloat (outerSize) * 0.1))
-    -- outerRect = [
-    --   (Position 0 250)
-    --   , (Position 250 -250)
-    --   , (Position -250 -250)]
+    outerRect = [
+      (Position -400 -400)
+      , (Position 400 -400)
+      , (Position 0 400)]
     
     -- innerRect = [
-    --   (Position 0 100)
-    --   , (Position 50 -100)
-    --   , (Position -50 -100)]
+    --   (Position -250 -250)
+    --   , (Position 250 -250)
+    --   , (Position 0 (433 - 250))
+    --   ]
     rect = ConnectedPolygon segments innerRect outerRect
   in
     [
@@ -79,7 +80,7 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 4
+segments = 4*3*2
 
 updateCount : Int
 updateCount = 3

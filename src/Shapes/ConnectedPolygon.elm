@@ -4,9 +4,6 @@ import Playground exposing (Shape, Number, Color)
 import Shapes.Line as Line exposing(Line)
 import Shapes.Position as Position exposing(Position)
 import Shapes.Polygon as Poly exposing(Polygon)
-import Html.Attributes exposing (list)
-import Array
-
 type alias ConnectedPolygon = 
   {
   segments : Int
@@ -45,12 +42,7 @@ connectedLinesPairs cPoly =
 
 linesBetween : ConnectedPolygon -> List(Line)
 linesBetween cPoly =
-  List.map2 
-    (Line.linesBetweenLines cPoly.segments) 
-    (Poly.toLines cPoly.innerPoly) 
-    (Poly.toLines cPoly.outerPoly)
-   |> List.concat
-
--- splitList : Int -> Int List(Line, Line) -> List(Line, Line)
--- splitList list =
- 
+  (List.map2
+    Line
+    (Poly.positionsOnPeremeter cPoly.segments cPoly.innerPoly)
+    (Poly.positionsOnPeremeter cPoly.segments cPoly.outerPoly))
