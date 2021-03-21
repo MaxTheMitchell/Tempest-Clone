@@ -76,6 +76,12 @@ rect pos width height =
       ,Position (pos.x - width) (pos.y + height)
     ]
 
-square : Position -> Float -> Polygon
-square pos size =
-  rect pos size size
+equaladeral : Int -> Position -> Float -> Polygon
+equaladeral sides center size = 
+  let
+    angle = 180 - ((toFloat(sides - 2) * 180) / (toFloat sides))
+    point = Position 0 1
+  in
+    List.range 0 (sides - 1)
+      |> List.map (\i -> Position.rotatePos (angle*(toFloat i)) point)
+      |> List.map (\pos -> Position (pos.x*size + center.x) (pos.y*size + center.y)) 

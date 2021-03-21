@@ -20,7 +20,7 @@ drawBullet screen color size cPoly bullet =
   let
     line = Character.characterLine cPoly bullet
   in
-    Poly.square (Line.lineCenter line) ((Line.lineSize line)*bulletSize/2) 
+    Poly.equaladeral 3 (Line.lineCenter line) ((Line.lineSize line)*bulletSize/2) 
       |> (Poly.drawPoly screen color size)
 
 updateBullets : Playground.Keyboard -> Character -> List(Bullet) -> List(Bullet)
@@ -53,4 +53,4 @@ bulletSize : Float
 bulletSize = 0.1
 
 bulletSpeed : Float 
-bulletSpeed = 0.1
+bulletSpeed = 0.05

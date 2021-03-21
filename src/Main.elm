@@ -19,21 +19,9 @@ type alias Memory =
 
 main =
   let 
-    outerRect = Poly.square (Position 0 0) 0.9
-    innerRect = Poly.square (Position 0 0) 0.1
-    -- outerRect = [
-    --    (Position 0.6 -0)
-    --    ,(Position 0 0.9)
-    --   , (Position -0.6 0)
-    --   ,(Position 0 -0.9)
-    --   ]
-    -- innerRect = [
-    --    (Position 0.1 -0)
-    --    ,(Position 0 0.15)
-    --   , (Position -0.1 0)
-    --   ,(Position 0 -0.15)
-    --   ]
-    rect = ConnectedPolygon segments innerRect outerRect
+    outer = Poly.equaladeral 3 (Position 0 0) 0.9
+    inner = Poly.equaladeral 5 (Position 0 0) 0.1
+    rect = ConnectedPolygon segments inner outer
   in
     game view update (Memory (Character 0 0) []  rect 0)
 
@@ -72,7 +60,7 @@ backgroundColor : Color
 backgroundColor = black
 
 segments : Int
-segments = 4*3
+segments = 3*6
 
 updateCount : Int
 updateCount = 3
