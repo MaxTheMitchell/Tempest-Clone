@@ -11,18 +11,18 @@ type alias ConnectedPolygon =
   ,outerPoly : Polygon
   }
 
-drawConnectedPoly : Color -> Int -> ConnectedPolygon -> Shape
-drawConnectedPoly color lineWidth cPoly =
+drawConnectedPoly : Playground.Screen -> Color -> Int -> ConnectedPolygon -> Shape
+drawConnectedPoly screen color lineWidth cPoly =
    [
-    Poly.drawPoly color lineWidth cPoly.outerPoly
-    ,Poly.drawPoly color lineWidth cPoly.innerPoly
-  ] ++ drawLinesBetween color lineWidth cPoly
+    Poly.drawPoly screen color lineWidth cPoly.outerPoly
+    ,Poly.drawPoly screen color lineWidth cPoly.innerPoly
+  ] ++ drawLinesBetween screen color lineWidth cPoly
     |> Playground.group
 
 
-drawLinesBetween : Color -> Int -> ConnectedPolygon -> List(Shape)
-drawLinesBetween color lineWidth cPoly =
-  List.map (Line.drawLine color lineWidth) 
+drawLinesBetween : Playground.Screen -> Color -> Int -> ConnectedPolygon -> List(Shape)
+drawLinesBetween screen color lineWidth cPoly =
+  List.map (Line.drawLine screen color lineWidth) 
     (linesBetween cPoly)
 
 linesBetweenConnectedPairs : Float -> ConnectedPolygon -> List(Line)

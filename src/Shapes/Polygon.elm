@@ -9,11 +9,11 @@ import Array exposing (length)
 type alias Polygon = List(Position)
 
 
-drawPoly : Color -> Int -> Polygon -> Shape
-drawPoly color lineWidth poly =
+drawPoly : Playground.Screen -> Color -> Int -> Polygon -> Shape
+drawPoly screen color lineWidth poly =
   poly 
     |> toLines
-    |> List.map (Line.drawLine color lineWidth)
+    |> List.map (Line.drawLine screen color lineWidth)
     |> Playground.group
 
 toLines : Polygon -> List(Line)
@@ -31,7 +31,7 @@ getCorner i poly =
 
 positionsOnPeremeter : Int -> Polygon -> List(Position)
 positionsOnPeremeter amount poly =
-  List.range 0 amount
+  List.range 0 (amount - 1)
     |> List.map (\i -> posOnPeremeter 
       ((1 / toFloat amount)*(toFloat i)) poly )
 
@@ -42,38 +42,36 @@ posOnPeremeter percent poly =
       let 
         len = lines
           |> Line.sumLines
-          |> toFloat
           |> (*) perc
-          |> truncate
         tail = (Maybe.withDefault [] (List.tail lines))
       in 
         case List.head lines of 
-        Nothing -> (Position 0 0)
+        Nothing -> (Debug.log "0 pos" (Position 0 0))
         Just head ->
           if (Line.lineSize head) >= len then 
             Line.positionOnLine 
-              (perc * (1 / ((toFloat(Line.lineSize head)) / toFloat(Line.sumLines lines))))
+              (perc * (1 / ((Line.lineSize head) / (Line.sumLines lines))))
               head
           else 
             realFunc 
-              (toFloat (len - (Line.lineSize head)) /  toFloat(Line.sumLines tail) )
+              ((len - (Line.lineSize head)) /(Line.sumLines tail) )
               tail
   in
     poly
       |> toLines
       |> (realFunc percent)
 
-peremeter : Polygon -> Int
+peremeter : Polygon -> Float
 peremeter poly =
  poly
   |> toLines
   |> Line.sumLines
 
-rect : Position -> Int -> Int -> Polygon
+rect : Position -> Float -> Float -> Polygon
 rect pos width height = 
   let 
-    halfWidth = width//2
-    halfHeight = height//2
+    halfWidth = width/2
+    halfHeight = height/2
   in
     [
       Position (pos.x - halfWidth) (pos.y - halfHeight)
@@ -82,6 +80,6 @@ rect pos width height =
       ,Position (pos.x - halfWidth) (pos.y + halfHeight)
     ]
 
-square : Position -> Int -> Polygon
+square : Position -> Float -> Polygon
 square pos size =
   rect pos size size

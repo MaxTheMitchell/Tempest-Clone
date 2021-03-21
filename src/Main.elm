@@ -2,7 +2,7 @@ module Main exposing(main, segments)
 
 import Playground exposing (..)
 import Shapes.Position exposing(Position)
-import Shapes.Line exposing(..)
+import Shapes.Line as Line exposing(..)
 import Characters.Player as Player exposing(Player)
 import Shapes.Polygon as Poly
 import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
@@ -15,21 +15,18 @@ type alias Memory =
 
 main =
   let 
-    outerSize = 600
-    outerRect = Poly.rect (Position 0 0) outerSize (outerSize)
-    -- innerRect = Poly.square (Position 0 0) (floor (toFloat (outerSize) * 0.1))
+    outerRect = Poly.square (Position 0 0) 0.9
+    innerRect = Poly.square (Position 0 0) 0.2
     -- outerRect = [
     --   (Position -400 -400)
     --   , (Position 400 -400)
     --   , (Position 0 400)]
     
-    innerRect = [
-       (Position -200 -200)
-       ,(Position 0 (200 - 346))
-      , (Position 200 -200)
-      , (Position 0 (346 - 200))
-      
-      ]
+    -- innerRect = [
+    --    (Position 0.1 -0.1)
+    --    ,(Position 0 0.2)
+    --   , (Position -0.1 -0.1)
+    --   ]
     rect = ConnectedPolygon segments innerRect outerRect
   in
     game view update (Memory (Player 0 0) 0 rect)
@@ -38,8 +35,9 @@ main =
 view computer memory =
     [
       fillScreen backgroundColor computer.screen
-      ,CPoly.drawConnectedPoly shapeColor lineWidthConst memory.cPoly
-      ,Player.drawPlayer yellow lineWidthConst memory.cPoly memory.player
+      ,CPoly.drawConnectedPoly computer.screen shapeColor lineWidthConst memory.cPoly
+      ,Player.drawPlayer computer.screen yellow lineWidthConst memory.cPoly memory.player
+      -- , Line.drawLine computer.screen red 5 (Line (Position 0.5 0) (Position 0 0))
     ]
 
 update : Computer -> Memory -> Memory

@@ -7,14 +7,14 @@ type alias  Line =
   , pos2 : Position
   }
 
-drawLine : Color -> Int -> Line -> Shape
-drawLine color width line =
+drawLine : Playground.Screen -> Color -> Int -> Line -> Shape
+drawLine screen color width line =
   let
-    center = lineCenter line  
+    center = Position.toScreenPos screen (lineCenter line)  
   in
-    rectangle color (toFloat width) (toFloat (lineSize line))
+    rectangle color (toFloat width) ((lineSize line) * (min screen.width screen.height))
       |> rotate (lineAngle line)
-      |> move (toFloat center.x) (toFloat center.y)
+      |> move center.x center.y
 
 linesBetweenLines : Int -> Line -> Line -> List(Line)
 linesBetweenLines amount line1 line2 =
@@ -40,23 +40,14 @@ positionOnLine percent line =
   let
     posCal p1 p2 =
       p1 - p2
-        |> toFloat
         |> (*) percent
-        |> floor
         |> (+) p2
   in
     Position (posCal line.pos1.x line.pos2.x) (posCal line.pos1.y line.pos2.y)
 
-
-invertLine : Line -> Line
-invertLine line =
-  Line 
-    (Position.invertPos line.pos1)
-    (Position.invertPos line.pos2)
-
 lineAngle : Line -> Float
 lineAngle line =
-  atan2 (toFloat( line.pos2.x - line.pos1.x )) (toFloat(line.pos1.y - line.pos2.y))
+  atan2 (line.pos2.x - line.pos1.x ) (line.pos1.y - line.pos2.y)
     |> toDegrees
 
 toDegrees : Float -> Float
@@ -67,7 +58,7 @@ lineCenter : Line -> Position
 lineCenter line =
   let
     posCenter p1 p2 =
-      (p1 + p2) // 2
+      (p1 + p2) / 2
   in  
     Position (posCenter line.pos1.x line.pos2.x) (posCenter line.pos1.y line.pos2.y) 
 
@@ -75,20 +66,18 @@ slope : Line -> Position
 slope line = 
   Position (line.pos1.x - line.pos2.x)  (line.pos1.y - line.pos2.y)
 
-sumLines : List(Line) -> Int 
+sumLines : List(Line) -> Float 
 sumLines list =
   list
     |> List.map lineSize
     |> List.sum 
 
-lineSize : Line -> Int
+lineSize : Line -> Float
 lineSize line =
     let
       sqrDiff p1 p2 =
         (abs (p1 - p2)) ^ 2      
     in 
       (sqrDiff line.pos1.x line.pos2.x) + (sqrDiff line.pos1.y line.pos2.y)
-        |> toFloat
         |> sqrt
-        |> floor
 

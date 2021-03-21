@@ -11,19 +11,20 @@ type alias Player =
     {x : Int
     , y : Float
     }
-drawPlayer : Color -> Int -> ConnectedPolygon -> Player -> Shape
-drawPlayer color size cPoly player =
+    
+drawPlayer : Playground.Screen -> Color -> Int -> ConnectedPolygon -> Player -> Shape
+drawPlayer screen color size cPoly player =
   let 
     line = playerLine cPoly player
     slope = Line.slope line
     center = Position 
-      ((Line.lineCenter line).x + (floor ((toFloat slope.y ) * playerSize * -1))) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
-      ((Line.lineCenter line).y + (floor ((toFloat slope.x ) * playerSize)))
+      ((Line.lineCenter line).x +  (slope.y * playerSize * -1)) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
+      ((Line.lineCenter line).y +  (slope.x * playerSize))
   in
     Playground.group 
       [
-        Line.drawLine color size (Line line.pos1 center)
-        ,Line.drawLine color size (Line line.pos2 center)
+        Line.drawLine screen color size (Line line.pos1 center)
+        ,Line.drawLine screen  color size (Line line.pos2 center)
       ]
 
 move : Playground.Keyboard -> Float -> ConnectedPolygon -> Player -> Player
