@@ -69,15 +69,11 @@ peremeter poly =
 
 rect : Position -> Float -> Float -> Polygon
 rect pos width height = 
-  let 
-    halfWidth = width/2
-    halfHeight = height/2
-  in
     [
-      Position (pos.x - halfWidth) (pos.y - halfHeight)
-      ,Position (pos.x + halfWidth) (pos.y - halfHeight)
-      ,Position (pos.x + halfWidth) (pos.y + halfHeight)
-      ,Position (pos.x - halfWidth) (pos.y + halfHeight)
+      Position (pos.x - width) (pos.y - height)
+      ,Position (pos.x + width) (pos.y - height)
+      ,Position (pos.x + width) (pos.y + height)
+      ,Position (pos.x - width) (pos.y + height)
     ]
 
 square : Position -> Float -> Polygon

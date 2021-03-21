@@ -9,5 +9,5 @@ type alias Position =
 toScreenPos : Playground.Screen -> Position -> Position
 toScreenPos screen pos =
   Position
-    (pos.x* ((min screen.width screen.height)))
-    (pos.y* ((min screen.width screen.height)))
+    (pos.x * ((min screen.width screen.height)/2))
+    (pos.y * ((min screen.width screen.height)/2))

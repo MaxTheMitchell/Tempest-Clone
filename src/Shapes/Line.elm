@@ -12,7 +12,7 @@ drawLine screen color width line =
   let
     center = Position.toScreenPos screen (lineCenter line)  
   in
-    rectangle color (toFloat width) ((lineSize line) * (min screen.width screen.height))
+    rectangle color (toFloat width) ((lineSize line) * (min screen.width screen.height)/2)
       |> rotate (lineAngle line)
       |> move center.x center.y
 

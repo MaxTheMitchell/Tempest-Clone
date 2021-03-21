@@ -9,7 +9,8 @@
         "Shapes.ConnectedRect",
         "Shapes.Line",
         "Shapes.Polygon",
-        "Shapes.ConnectedPolygon"
+        "Shapes.ConnectedPolygon",
+        "Characters.Character"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
