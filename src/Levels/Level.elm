@@ -3,9 +3,6 @@ module Levels.Level exposing(..)
 import Playground exposing(Shape, Screen, Color, Keyboard, green, yellow, rgb)
 
 import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
-import Shapes.Polygon as Poly exposing(Polygon)
-import Shapes.Position exposing(Position)
-
 import Characters.Character exposing(Character)
 import Characters.Player as Player exposing(Player)
 import Characters.Bullet as Bullet exposing(Bullet)

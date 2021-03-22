@@ -1,6 +1,6 @@
 module Main exposing(main)
 
-import Playground exposing (..)
+import Playground exposing (Computer, Screen, Shape, Color, black, rectangle, game)
 
 import Levels.Levels as Levels exposing(Levels) 
 
