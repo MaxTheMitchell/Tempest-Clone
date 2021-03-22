@@ -41,7 +41,14 @@ levelsInit =
           (Poly.equaladeral 3 (Position 0 0) 0.1)
           (Poly.equaladeral 5 (Position 0 0) 0.9))
       (\i -> case i of 
-        10 -> [(Flipper (Character 0 0.5))]
+        10 -> [Flipper (Character 0 1)]
+        60 -> [Flipper (Character 4 1)
+              ,Flipper (Character 8 1)
+              ]
+        120 -> [Flipper (Character 5 1)
+              ,Flipper (Character 2 1)
+              ,Flipper (Character 10 1)
+              ]
         _ -> []
       )
   ] 

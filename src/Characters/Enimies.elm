@@ -18,3 +18,11 @@ drawEnimies screen lineWidth cPoly enimies =
       Flipper c -> Flipper.drawFlipper screen lineWidth cPoly c
     )
     |> Playground.group
+
+updateEnimies : List(Enimie) -> List(Enimie)
+updateEnimies enimies =
+  enimies
+    |> List.map (\e ->
+      case e of
+      Flipper c -> Flipper (Flipper.updateFlipper c)
+    )

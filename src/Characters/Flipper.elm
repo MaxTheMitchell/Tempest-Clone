@@ -6,6 +6,7 @@ import Shapes.Polygon as Poly
 import Shapes.Line as Line
 
 import Playground exposing(Screen, Color, Shape)
+import Characters.Player exposing (speed)
 type alias Flipper = Character.Character
 
 drawFlipper : Screen -> Int -> ConnectedPolygon -> Flipper -> Shape
@@ -22,11 +23,17 @@ drawFlipper screen lineWidth cPoly flipper =
     ]
       |> (Poly.drawPoly screen color lineWidth)
 
+updateFlipper : Flipper -> Flipper
+updateFlipper flipper =
+  Character
+    flipper.x
+    (flipper.y - speed) 
+
 speed : Float
-speed = 0.1
+speed = 0.005
 
 color : Color 
 color = Playground.red 
 
 filpperHeight : Float
-filpperHeight = 0.1
+filpperHeight = 0.05
