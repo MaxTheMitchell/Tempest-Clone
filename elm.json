@@ -3,21 +3,13 @@
     "source-directories": [
         "src"
     ],
-    "exposed-modules": [
-        "Shapes.Position",
-        "Shapes.Rect",
-        "Shapes.ConnectedRect",
-        "Shapes.Line",
-        "Shapes.Polygon",
-        "Shapes.ConnectedPolygon",
-        "Characters.Character"
-    ],
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
             "elm/browser": "1.0.2",
             "elm/core": "1.0.5",
             "elm/html": "1.0.0",
+            "elm/random": "1.0.0",
             "evancz/elm-playground": "1.0.3"
         },
         "indirect": {

@@ -1,4 +1,5 @@
 module Characters.Character exposing(..)
+
 import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
 import Shapes.Line as Line exposing(Line)
 import Shapes.Position as Position exposing(Position)

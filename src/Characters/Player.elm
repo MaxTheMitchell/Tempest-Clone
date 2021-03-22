@@ -24,11 +24,11 @@ drawPlayer screen color size cPoly player =
         ,Line.drawLine screen  color size (Line line.pos2 center)
       ]
 
-move : Playground.Keyboard -> Float -> ConnectedPolygon -> Player -> Player
-move keyboard speed cPoly player =
+move : Playground.Keyboard -> ConnectedPolygon -> Player -> Player
+move keyboard cPoly player =
   player
     |> (moveX (truncate (Playground.toX keyboard)) cPoly)
-    |> (moveY (truncate (Playground.toY keyboard)) speed)
+    |> (moveY (truncate (Playground.toY keyboard)))
 
 moveX : Int -> ConnectedPolygon -> Player -> Player
 moveX dir cPoly player = 
@@ -41,8 +41,8 @@ moveX dir cPoly player =
   )
   player.y
 
-moveY : Int -> Float -> Player -> Player
-moveY dir speed player = 
+moveY : Int -> Player -> Player
+moveY dir player = 
   Character
     player.x
     (
@@ -55,6 +55,9 @@ moveY dir speed player =
 
 playerSize : Float
 playerSize = 0.2
+
+speed : Float
+speed = 0.1
 
 bound : Float -> Float -> Float -> Float
 bound min max val =
