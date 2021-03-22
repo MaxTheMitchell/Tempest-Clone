@@ -1,7 +1,7 @@
 module Characters.Enimies exposing(..)
 
 import Characters.Flipper as Flipper exposing(Flipper)
-import Characters.Character exposing(Character)
+import Characters.Character as Character exposing(Character)
 import Shapes.ConnectedPolygon exposing(ConnectedPolygon)
 
 import Playground exposing(Shape, Screen, Color)
@@ -18,10 +18,16 @@ drawEnimies screen lineWidth cPoly enimies =
     )
     |> Playground.group
 
-updateEnimies : List(Enimie) -> List(Enimie)
-updateEnimies enimies =
+updateEnimies : List(Character) -> List(Enimie) -> List(Enimie)
+updateEnimies bullets enimies =
   enimies
     |> List.map (\e ->
       case e of
       Flipper c -> Flipper (Flipper.updateFlipper c)
     )
+    |> List.filter 
+      (\e -> case e of 
+      Flipper c -> not (List.any 
+          (Character.charactersIntersecting c)
+          bullets
+          ))

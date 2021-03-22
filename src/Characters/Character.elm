@@ -22,6 +22,12 @@ characterLine cPoly character =
     |> Array.get character.x
     |> Maybe.withDefault (Line (Position 0 0) (Position 0 0)) 
 
--- charactersIntersecting : Character -> Character -> Bool
--- charactersIntersecting character1 character2 =
---   character1.x && character2.y 
+charactersIntersecting : Character -> Character -> Bool
+charactersIntersecting character1 character2 =
+  (character1.x == character2.x) && (charactersYInterecting character1 character2)
+
+charactersYInterecting : Character -> Character -> Bool
+charactersYInterecting character1 character2 =
+  (character1.y >= character2.y && character1.y <= character2.y + character2.height)
+  || 
+  (character1.y + character1.height >= character2.y && character1.y  + character1.height <= character2.y + character2.height)

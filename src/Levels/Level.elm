@@ -41,7 +41,7 @@ updateLevel keyboard level =
         level.player
     )
     (Bullet.updateBullets keyboard level.player level.bullets)
-    ((Enimies.updateEnimies level.enimies) ++ level.events level.count)
+    ((Enimies.updateEnimies level.bullets level.enimies) ++ level.events level.count)
     level.events
     
 
