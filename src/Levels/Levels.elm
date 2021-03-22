@@ -5,12 +5,13 @@ import Levels.Level as Level exposing(Level, levelInit)
 import Shapes.ConnectedPolygon exposing(ConnectedPolygon)
 import Shapes.Polygon as Poly exposing(Polygon)
 import Shapes.Position exposing(Position)
-
 import Characters.Character exposing(Character)
+import Characters.Enimies exposing(..)
 
 import Playground exposing (Screen, Shape)
 import Array exposing(Array) 
 import Playground exposing (Keyboard)
+import Characters.Flipper exposing (Flipper)
 
 type alias Levels = 
   { count : Int
@@ -37,8 +38,12 @@ levelsInit =
     levelInit
       (ConnectedPolygon
           20
-          (Poly.equaladeral 4 (Position 0 0) 0.1)
-          (Poly.equaladeral 4 (Position 0 0) 0.9))
+          (Poly.equaladeral 3 (Position 0 0) 0.1)
+          (Poly.equaladeral 5 (Position 0 0) 0.9))
+      (\i -> case i of 
+        10 -> [(Flipper (Character 0 0.5))]
+        _ -> []
+      )
   ] 
     |> Array.fromList
     |> (Levels 0)
@@ -57,6 +62,7 @@ fakeLevel =
       (Poly.equaladeral 0 (Position 0 0) 0)
       (Poly.equaladeral 0 (Position 0 0) 0)     
     )
+    (\_ -> [])
 
 lineWidth : Float
 lineWidth = 3

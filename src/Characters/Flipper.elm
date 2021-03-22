@@ -6,21 +6,10 @@ import Shapes.Polygon as Poly
 import Shapes.Line as Line
 
 import Playground exposing(Screen, Color, Shape)
-import Random
-
 type alias Flipper = Character.Character
 
-newFlipper : ConnectedPolygon -> Flipper
-newFlipper cPoly =
-  1 
---   cPoly
-    -- |> List.length
-    -- |> (Random.int 0)
-    -- |> (Random.generate (INT() )
-    |> (\x -> Character.Character x 0)
-
-drawFlipper : Screen -> Color -> Int -> ConnectedPolygon -> Flipper -> Shape
-drawFlipper screen color lineWidth cPoly flipper =
+drawFlipper : Screen -> Int -> ConnectedPolygon -> Flipper -> Shape
+drawFlipper screen lineWidth cPoly flipper =
   let
     line = Character.characterLine cPoly flipper
     line2 = Character.characterLine cPoly (Character flipper.x (flipper.y - filpperHeight))  
@@ -35,5 +24,9 @@ drawFlipper screen color lineWidth cPoly flipper =
 
 speed : Float
 speed = 0.1
+
+color : Color 
+color = Playground.red 
+
 filpperHeight : Float
 filpperHeight = 0.1

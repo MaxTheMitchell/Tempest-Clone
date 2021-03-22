@@ -4,7 +4,6 @@ import Playground exposing (Shape, Number, Color)
 import Shapes.Line as Line exposing(Line)
 import Shapes.Position as Position exposing(Position)
 import Array
-import Array exposing (length)
 
 type alias Polygon = List(Position)
 
@@ -46,7 +45,7 @@ posOnPeremeter percent poly =
         tail = (Maybe.withDefault [] (List.tail lines))
       in 
         case List.head lines of 
-        Nothing -> (Debug.log "0 pos" (Position 0 0))
+        Nothing -> (Position 0 0)
         Just head ->
           if (Line.lineSize head) >= len then 
             Line.positionOnLine 
