@@ -9,19 +9,19 @@ import Shapes.Line as Line
 import Shapes.ConnectedPolygon exposing(ConnectedPolygon)
 type alias Bullet = Character
 
-drawBullets : Playground.Screen -> Color -> Int -> ConnectedPolygon -> List(Bullet) -> Shape
-drawBullets screen color size cPoly bullets = 
+drawBullets : Playground.Screen -> Int -> ConnectedPolygon -> List(Bullet) -> Shape
+drawBullets screen lineWidth cPoly bullets = 
     bullets
-      |> (List.map (drawBullet screen color size cPoly))
+      |> List.map (drawBullet screen lineWidth cPoly)
       |> Playground.group 
 
-drawBullet : Playground.Screen -> Color -> Int -> ConnectedPolygon -> Bullet -> Shape
-drawBullet screen color size cPoly bullet = 
+drawBullet : Playground.Screen -> Int -> ConnectedPolygon -> Bullet -> Shape
+drawBullet screen size cPoly bullet = 
   let
     line = Character.characterLine cPoly bullet
   in
-    Poly.equaladeral 3 (Line.lineCenter line) ((Line.lineSize line)*bulletSize/2) 
-      |> (Poly.drawPoly screen color size)
+    Poly.equaladeral 3 (Line.lineCenter line) ((Line.lineSize line)*bullet.height/2) 
+      |> (Poly.drawPoly screen bullet.color size)
 
 updateBullets : Playground.Keyboard -> Character -> List(Bullet) -> List(Bullet)
 updateBullets keyboard player bullets =
@@ -34,13 +34,15 @@ updateBullets keyboard player bullets =
 
 addBullet : Character -> List(Bullet) -> List(Bullet)
 addBullet player bullets =
-  (Character player.x player.y) :: bullets 
+  (Character player.x player.y bulletSize bulletColor) :: bullets 
 
 move : Bullet -> Bullet
 move bullet = 
   Character
     bullet.x
     (bullet.y + bulletSpeed)
+    bullet.height
+    bullet.color
 
 isInBounds : Bullet -> Bool
 isInBounds bullet =
@@ -48,6 +50,10 @@ isInBounds bullet =
 
 isShooting : Playground.Keyboard -> Bool
 isShooting keyboard = keyboard.space == True
+
+
+bulletColor : Color
+bulletColor = Playground.green
 
 bulletSize : Float
 bulletSize = 0.1

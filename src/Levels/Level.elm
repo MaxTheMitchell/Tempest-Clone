@@ -8,6 +8,7 @@ import Characters.Player as Player exposing(Player)
 import Characters.Bullet as Bullet exposing(Bullet)
 import Characters.Flipper as Flipper
 import Characters.Enimies as Enimies exposing(Enimie)
+import Playground exposing (black)
 
 type alias Level = 
   {
@@ -23,8 +24,8 @@ drawLevel : Screen -> Level -> Shape
 drawLevel screen level =
   [
     CPoly.drawConnectedPoly screen shapeColor lineWidth level.cPoly
-    ,Player.drawPlayer screen yellow lineWidth level.cPoly level.player
-    ,Bullet.drawBullets screen green lineWidth level.cPoly level.bullets
+    ,Player.drawPlayer screen lineWidth level.cPoly level.player
+    ,Bullet.drawBullets screen lineWidth level.cPoly level.bullets
     ,Enimies.drawEnimies screen lineWidth level.cPoly level.enimies
   ] |> Playground.group
 
@@ -49,7 +50,7 @@ levelInit cPoly events =
   Level
     0
     cPoly
-    (Character 0 0)
+    Player.initPlayer
     []
     []
     events

@@ -10,14 +10,14 @@ import Array
 
 type alias Player = Character
 
-drawPlayer : Playground.Screen -> Color -> Int -> ConnectedPolygon -> Player -> Shape
-drawPlayer screen color size cPoly player =
+drawPlayer : Playground.Screen -> Int -> ConnectedPolygon -> Player -> Shape
+drawPlayer screen size cPoly player =
   let 
     line = Character.characterLine cPoly player
     slope = Line.slope line
     center = Position 
-      ((Line.lineCenter line).x + (slope.y * playerSize * -1)) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
-      ((Line.lineCenter line).y + (slope.x * playerSize))
+      ((Line.lineCenter line).x + (slope.y * player.height * -1)) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
+      ((Line.lineCenter line).y + (slope.x * player.height))
   in
       [
         line.pos1
@@ -32,6 +32,9 @@ move keyboard cPoly player =
     |> (moveX (truncate (Playground.toX keyboard)) cPoly)
     |> (moveY (truncate (Playground.toY keyboard)))
 
+initPlayer : Player
+initPlayer = Character 0 0 playerSize color
+
 moveX : Int -> ConnectedPolygon -> Player -> Player
 moveX dir cPoly player = 
   Character 
@@ -42,6 +45,8 @@ moveX dir cPoly player =
       |> modBy cPoly.segments
   )
   player.y
+  player.height
+  player.color
 
 moveY : Int -> Player -> Player
 moveY dir player = 
@@ -54,12 +59,17 @@ moveY dir player =
         |> (+) player.y
         |> (bound 0 1)
     )
+    player.height
+    player.color
 
 playerSize : Float
 playerSize = 0.2
 
 speed : Float
 speed = 0.1
+
+color : Color
+color = Playground.yellow
 
 bound : Float -> Float -> Float -> Float
 bound min max val =

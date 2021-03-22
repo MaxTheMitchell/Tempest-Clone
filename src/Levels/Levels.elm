@@ -11,7 +11,7 @@ import Characters.Enimies exposing(..)
 import Playground exposing (Screen, Shape)
 import Array exposing(Array) 
 import Playground exposing (Keyboard)
-import Characters.Flipper exposing (Flipper)
+import Characters.Flipper as Flipper exposing (Flipper)
 
 type alias Levels = 
   { count : Int
@@ -41,13 +41,13 @@ levelsInit =
           (Poly.equaladeral 3 (Position 0 0) 0.1)
           (Poly.equaladeral 5 (Position 0 0) 0.9))
       (\i -> case i of 
-        10 -> [Flipper (Character 0 1)]
-        60 -> [Flipper (Character 4 1)
-              ,Flipper (Character 8 1)
+        10 -> [Flipper (Flipper.initFlipper 0)]
+        60 -> [Flipper (Flipper.initFlipper 4)
+              ,Flipper (Flipper.initFlipper 8)
               ]
-        120 -> [Flipper (Character 5 1)
-              ,Flipper (Character 2 1)
-              ,Flipper (Character 10 1)
+        120 -> [Flipper (Flipper.initFlipper 5)
+              ,Flipper (Flipper.initFlipper 2)
+              ,Flipper (Flipper.initFlipper 10)
               ]
         _ -> []
       )

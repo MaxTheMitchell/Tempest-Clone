@@ -6,7 +6,6 @@ import Shapes.ConnectedPolygon exposing(ConnectedPolygon)
 
 import Playground exposing(Shape, Screen, Color)
 
-
 type Enimie
   = Flipper Character
 
