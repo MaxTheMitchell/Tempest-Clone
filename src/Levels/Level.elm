@@ -31,6 +31,10 @@ drawLevel screen level =
 
 updateLevel : Keyboard -> Level -> Level
 updateLevel keyboard level =
+  let
+    bullets = level.bullets
+  in
+  
   Level
     (level.count + 1)
     level.cPoly
@@ -40,8 +44,8 @@ updateLevel keyboard level =
       else
         level.player
     )
-    (Bullet.updateBullets keyboard level.player level.bullets)
-    ((Enimies.updateEnimies level.bullets level.enimies) ++ level.events level.count)
+    (Bullet.updateBullets keyboard level.player level.enimies level.bullets)
+    ((Enimies.updateEnimies bullets level.enimies) ++ level.events level.count)
     level.events
     
 

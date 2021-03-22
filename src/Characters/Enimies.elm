@@ -26,8 +26,15 @@ updateEnimies bullets enimies =
       Flipper c -> Flipper (Flipper.updateFlipper c)
     )
     |> List.filter 
-      (\e -> case e of 
-      Flipper c -> not (List.any 
-          (Character.charactersIntersecting c)
+      (\e -> not (List.any 
+          (Character.charactersIntersecting (toCharacter e))
           bullets
           ))
+
+toCharacters : List(Enimie) -> List(Character)
+toCharacters = List.map toCharacter
+
+toCharacter : Enimie -> Character
+toCharacter enimie =
+  case enimie of 
+  Flipper c -> c

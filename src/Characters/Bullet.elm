@@ -7,6 +7,8 @@ import Shapes.Polygon as Poly exposing(Polygon)
 import Shapes.Position as Position exposing(Position)
 import Shapes.Line as Line
 import Shapes.ConnectedPolygon exposing(ConnectedPolygon)
+import Characters.Enimies as Enimies exposing(Enimie)
+
 type alias Bullet = Character
 
 drawBullets : Playground.Screen -> Int -> ConnectedPolygon -> List(Bullet) -> Shape
@@ -23,14 +25,17 @@ drawBullet screen size cPoly bullet =
     Poly.equaladeral 3 (Line.lineCenter line) ((Line.lineSize line)*bullet.height/2) 
       |> (Poly.drawPoly screen bullet.color size)
 
-updateBullets : Playground.Keyboard -> Character -> List(Bullet) -> List(Bullet)
-updateBullets keyboard player bullets =
+updateBullets : Playground.Keyboard -> Character -> List(Enimie) -> List(Bullet) -> List(Bullet)
+updateBullets keyboard player enimies bullets =
     (if isShooting keyboard then
         addBullet player bullets
     else
       bullets)
+      |> List.filter (\b -> 
+        (isInBounds b) 
+        && not (List.any (Character.charactersIntersecting b) (Enimies.toCharacters enimies))
+        ) 
       |> List.map move
-      |> List.filter isInBounds
 
 addBullet : Character -> List(Bullet) -> List(Bullet)
 addBullet player bullets =
