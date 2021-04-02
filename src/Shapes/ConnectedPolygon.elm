@@ -25,6 +25,13 @@ drawLinesBetween screen color lineWidth cPoly =
   List.map (Line.drawLine screen color lineWidth) 
     (linesBetween cPoly)
 
+grow : Float -> ConnectedPolygon -> ConnectedPolygon
+grow percent cPoly =
+  ConnectedPolygon
+    cPoly.segments
+    (Poly.grow percent cPoly.innerPoly)
+    (Poly.grow percent cPoly.outerPoly)
+
 linesBetweenConnectedPairs : Float -> ConnectedPolygon -> List(Line)
 linesBetweenConnectedPairs percent cPoly =
   List.map 

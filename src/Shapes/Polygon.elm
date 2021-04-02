@@ -15,6 +15,10 @@ drawPoly screen color lineWidth poly =
     |> List.map (Line.drawLine screen color lineWidth)
     |> Playground.group
 
+grow : Float -> Polygon -> Polygon
+grow percent poly =
+  List.map (Position.grow percent) poly
+
 toLines : Polygon -> List(Line)
 toLines poly = 
     [Maybe.withDefault (Position 0 0) (List.head poly)]

@@ -24,3 +24,9 @@ rotatePos angle pos =
   Position
     (pos.x*(cos (degrees angle)) - pos.y*(sin (degrees angle)) )
     (pos.y*(cos (degrees angle)) + pos.x*(sin (degrees angle))) 
+
+grow : Float -> Position -> Position
+grow percent pos =
+  Position 
+    (pos.x * percent)
+    (pos.y * percent)

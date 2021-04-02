@@ -41,21 +41,22 @@ drawPlayer screen size cPoly player =
 updatePlayer : Playground.Keyboard -> ConnectedPolygon -> List(Enimie) -> Player -> Player
 updatePlayer keyboard cPoly enimies player =
   let 
-    updateInterval = 2
+    moveInterval = 2
+    deathInterval = 5
   in
     case player of 
     Alive c i -> 
       if playerHit enimies c then
         Dying c 0
       else 
-        if i > updateInterval then 
+        if i > moveInterval then 
           c 
             |>(moveX (truncate (Playground.toX keyboard)) cPoly)
             |> (\ch -> Alive ch 0)
         else 
-          Alive c (if (Playground.toX keyboard)== 0 then updateInterval else i+1 )
+          Alive c (if (Playground.toX keyboard)== 0 then moveInterval else i+1 )
     Dying c i ->
-      if i > updateInterval then 
+      if i > deathInterval then 
         Dead
       else 
         Dying c (i+1)
