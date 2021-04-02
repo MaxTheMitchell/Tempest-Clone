@@ -39,7 +39,7 @@ updateBullets keyboard player enimies bullets =
 
 addBullet : Character -> List(Bullet) -> List(Bullet)
 addBullet player bullets =
-  (Character player.x player.y bulletSize 0 updateInterval bulletColor) :: bullets 
+  (Character player.x player.y bulletSize bulletColor) :: bullets 
 
 move : Bullet -> Bullet
 move bullet = 
@@ -47,8 +47,6 @@ move bullet =
     bullet.x
     (bullet.y + bulletSpeed)
     bullet.height
-    bullet.updateCount
-    bullet.updateInterval
     bullet.color
 
 isInBounds : Bullet -> Bool
@@ -57,9 +55,6 @@ isInBounds bullet =
 
 isShooting : Playground.Keyboard -> Bool
 isShooting keyboard = keyboard.space == True
-
-updateInterval : Int 
-updateInterval = 2
 
 bulletColor : Color
 bulletColor = Playground.green

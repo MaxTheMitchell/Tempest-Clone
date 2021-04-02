@@ -13,8 +13,6 @@ type alias Character =
     {x : Int
     , y : Float
     , height : Float
-    , updateCount : Int 
-    , updateInterval : Int 
     , color : Color
     }
 
@@ -39,19 +37,6 @@ charactersYInterecting character1 character2 =
 onRim : Character -> Bool
 onRim character = character.y == 0
 
-shouldUpdate : Character -> Bool
-shouldUpdate character = character.updateCount == 0
-
-updateCharacter : Character -> Character
-updateCharacter character =
-  Character
-    character.x
-    character.y
-    character.height
-    (modBy character.updateInterval (character.updateCount + 1))
-    character.updateInterval
-    character.color
-
 drawDead :  Playground.Screen -> Int -> ConnectedPolygon -> Character -> Shape
 drawDead screen lineWidth cPoly character =
   let
@@ -70,4 +55,4 @@ drawDead screen lineWidth cPoly character =
 
 
 nullCharacter : Character 
-nullCharacter = Character 0 0 0 0 0 Playground.black
+nullCharacter = Character 0 0 0 Playground.black

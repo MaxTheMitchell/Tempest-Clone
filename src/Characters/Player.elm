@@ -13,8 +13,8 @@ import Html.Attributes exposing (height)
 import Playground exposing (black)
 
 type Player
-  = Alive Character
-  | Dying Character
+  = Alive Character Int
+  | Dying Character Int
   | Dead
 
 drawPlayer : Playground.Screen -> Int -> ConnectedPolygon -> Player -> Shape
@@ -28,44 +28,42 @@ drawPlayer screen size cPoly player =
       ((Line.lineCenter line).y + (slope.x * height))
   in
     case player of 
-    Alive _ -> 
+    Alive _ _ -> 
       [
         line.pos1
         ,center
         , line.pos2
         , Position (center.x + (slope.y * playerSize * -1)) (center.y + (slope.x * playerSize))
       ] |> (Poly.drawPoly screen color size)
-    Dying c -> Character.drawDead screen size cPoly c
+    Dying c _ -> Character.drawDead screen size cPoly c
     Dead -> Playground.rectangle black 0 0
     
 updatePlayer : Playground.Keyboard -> ConnectedPolygon -> List(Enimie) -> Player -> Player
 updatePlayer keyboard cPoly enimies player =
-  case player of 
-  Alive c -> 
-    if playerHit enimies c then
-      Dying c
-    else 
-      if Character.shouldUpdate c then 
-        c 
-          |>(moveX (truncate (Playground.toX keyboard)) cPoly)
-          |> Character.updateCharacter
-          |> Alive
+  let 
+    updateInterval = 2
+  in
+    case player of 
+    Alive c i -> 
+      if playerHit enimies c then
+        Dying c 0
       else 
-        c
-          |> Character.updateCharacter
-          |> Alive
-  Dying c ->
-    if Character.shouldUpdate c then 
-      Dead
-    else 
-      c
-        |> Character.updateCharacter
-        |> Dying
-  Dead -> Dead
+        if i > updateInterval then 
+          c 
+            |>(moveX (truncate (Playground.toX keyboard)) cPoly)
+            |> (\ch -> Alive ch 0)
+        else 
+          Alive c (if (Playground.toX keyboard)== 0 then updateInterval else i+1 )
+    Dying c i ->
+      if i > updateInterval then 
+        Dead
+      else 
+        Dying c (i+1)
+    Dead -> Dead
       
 
 initPlayer : Player
-initPlayer = Alive (Character 0 0 playerSize 0 updateInterval color)
+initPlayer = Alive (Character 0 0 playerSize color) 0
 
 playerHit : List(Enimie) -> Character -> Bool
 playerHit enimies player =
@@ -84,8 +82,6 @@ moveX dir cPoly player =
   )
   player.y
   player.height
-  player.updateCount
-  player.updateInterval
   player.color
 
 moveY : Int -> Character -> Character
@@ -100,8 +96,6 @@ moveY dir player =
         |> (bound 0 1)
     )
     player.height
-    player.updateCount
-    player.updateInterval
     player.color
 
 isDead : Player -> Bool
@@ -113,13 +107,11 @@ isDead player =
 toCharacter : Player -> Character
 toCharacter player =
   case player of 
-  Alive c -> c
-  Dying c -> c
+  Alive c _ -> c
+  Dying c _ -> c
   Dead -> Character.nullCharacter
 
 
-updateInterval : Int 
-updateInterval = 3
 playerSize : Float
 playerSize = 0.2
 

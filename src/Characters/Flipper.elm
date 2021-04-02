@@ -10,7 +10,7 @@ import Playground exposing(Screen, Color, Shape)
 type Flipper
   = MoveX Character
   | MoveY Character
-  | Dying Character
+  | Dying Character Int
   | Dead
 
 drawFlipper : Screen -> Int -> ConnectedPolygon -> Flipper -> Shape
@@ -24,13 +24,11 @@ drawFlipper screen lineWidth cPoly flipper =
         flipperChacter.x 
         (flipperChacter.y - flipperChacter.height) 
         flipperChacter.height
-        flipperChacter.updateCount
-        flipperChacter.updateInterval
         flipperChacter.color)  
     poly = [line.pos1 ,line2.pos2 ,line.pos2,line2.pos1]
   in
     case flipper of 
-      Dying c -> Character.drawDead screen lineWidth cPoly c
+      Dying c _ -> Character.drawDead screen lineWidth cPoly c
       _ -> Poly.drawPoly screen flipperChacter.color lineWidth poly
 
 updateFlipper : List(Character) -> Flipper -> Flipper
@@ -47,25 +45,22 @@ updateFlipper bullets flipper =
         c.x
         (bound (c.y - speed)) 
         c.height
-        c.updateCount
-        c.updateInterval
         c.color)
-    Dying c -> if Character.shouldUpdate c
+    Dying c i -> if i > 5
       then Dead
-      else Dying (Character.updateCharacter c)
+      else Dying c (i+1)
     _ -> Dead
 
 initFlipper : Int -> Flipper
 initFlipper x =
-  MoveY (Character x 1 filpperHeight 1 5 color)
+  MoveY (Character x 1 filpperHeight color)
 
 kill : Flipper -> Flipper 
 kill flipper =
   case flipper of 
-  MoveX c -> Dying c
-  MoveY c -> Dying c
-  Dying _ -> flipper
-  Dead -> Dead
+  MoveX c -> Dying c 0
+  MoveY c -> Dying c 0
+  _ -> flipper
 
 bound : Float -> Float
 bound y =
@@ -78,17 +73,15 @@ bound y =
 dead : Flipper -> Bool
 dead flipper =
   case flipper of
-  MoveX _ -> False
-  MoveY _ -> False
-  Dying _ -> False
   Dead -> True 
+  _ -> False
 
 toCharacter : Flipper -> Character
 toCharacter flipper =
   case flipper of 
   MoveX c -> c
   MoveY c -> c
-  Dying c -> c
+  Dying c _ -> c
   Dead -> Character.nullCharacter 
 
 speed : Float
