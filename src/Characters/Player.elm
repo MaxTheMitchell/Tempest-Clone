@@ -6,36 +6,74 @@ import Shapes.ConnectedPolygon as CPoly exposing(ConnectedPolygon)
 import Shapes.Polygon as Poly exposing(Polygon)
 import Shapes.Position as Position exposing(Position)
 import Characters.Character as Character exposing(Character)
+import Characters.Enimies as Enimies exposing(Enimie)
 import Array
+import Characters.Flipper exposing (Flipper(..))
+import Html.Attributes exposing (height)
+import Playground exposing (black)
 
-type alias Player = Character
+type Player
+  = Alive Character
+  | Dying Character
+  | Dead
 
 drawPlayer : Playground.Screen -> Int -> ConnectedPolygon -> Player -> Shape
 drawPlayer screen size cPoly player =
   let 
-    line = Character.characterLine cPoly player
+    line = Character.characterLine cPoly (toCharacter player)
+    height = (toCharacter player).height
     slope = Line.slope line
     center = Position 
-      ((Line.lineCenter line).x + (slope.y * player.height * -1)) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
-      ((Line.lineCenter line).y + (slope.x * player.height))
+      ((Line.lineCenter line).x + (slope.y * height * -1)) --this negitve one fixes the "arrow" pointing for the player. Need to look into more at some point
+      ((Line.lineCenter line).y + (slope.x * height))
   in
+    case player of 
+    Alive _ -> 
       [
         line.pos1
         ,center
         , line.pos2
         , Position (center.x + (slope.y * playerSize * -1)) (center.y + (slope.x * playerSize))
       ] |> (Poly.drawPoly screen color size)
-
-move : Playground.Keyboard -> ConnectedPolygon -> Player -> Player
-move keyboard cPoly player =
-  player
-    |> (moveX (truncate (Playground.toX keyboard)) cPoly)
-    |> (moveY (truncate (Playground.toY keyboard)))
+    Dying c -> Character.drawDead screen size cPoly c
+    Dead -> Playground.rectangle black 0 0
+    
+updatePlayer : Playground.Keyboard -> ConnectedPolygon -> List(Enimie) -> Player -> Player
+updatePlayer keyboard cPoly enimies player =
+  case player of 
+  Alive c -> 
+    if playerHit enimies c then
+      Dying c
+    else 
+      if Character.shouldUpdate c then 
+        c 
+          |>(moveX (truncate (Playground.toX keyboard)) cPoly)
+          |> Character.updateCharacter
+          |> Alive
+      else 
+        c
+          |> Character.updateCharacter
+          |> Alive
+  Dying c ->
+    if Character.shouldUpdate c then 
+      Dead
+    else 
+      c
+        |> Character.updateCharacter
+        |> Dying
+  Dead -> Dead
+      
 
 initPlayer : Player
-initPlayer = Character 0 0 playerSize color
+initPlayer = Alive (Character 0 0 playerSize 0 updateInterval color)
 
-moveX : Int -> ConnectedPolygon -> Player -> Player
+playerHit : List(Enimie) -> Character -> Bool
+playerHit enimies player =
+  enimies 
+    |> Enimies.toCharacters
+    |> List.any (\e -> Character.onRim e && e.x == player.x)
+
+moveX : Int -> ConnectedPolygon -> Character -> Character
 moveX dir cPoly player = 
   Character 
   (
@@ -46,9 +84,11 @@ moveX dir cPoly player =
   )
   player.y
   player.height
+  player.updateCount
+  player.updateInterval
   player.color
 
-moveY : Int -> Player -> Player
+moveY : Int -> Character -> Character
 moveY dir player = 
   Character
     player.x
@@ -60,8 +100,26 @@ moveY dir player =
         |> (bound 0 1)
     )
     player.height
+    player.updateCount
+    player.updateInterval
     player.color
 
+isDead : Player -> Bool
+isDead player =
+  case player of 
+  Dead -> True
+  _ -> False
+
+toCharacter : Player -> Character
+toCharacter player =
+  case player of 
+  Alive c -> c
+  Dying c -> c
+  Dead -> Character.nullCharacter
+
+
+updateInterval : Int 
+updateInterval = 3
 playerSize : Float
 playerSize = 0.2
 

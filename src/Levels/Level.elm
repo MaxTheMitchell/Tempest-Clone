@@ -34,19 +34,16 @@ updateLevel keyboard level =
   let
     bullets = level.bullets
   in
-  
-  Level
-    (level.count + 1)
-    level.cPoly
-    (
-      if modBy updateCount level.count == 0 then 
-        Player.move keyboard level.cPoly level.player
-      else
-        level.player
-    )
-    (Bullet.updateBullets keyboard level.player level.enimies level.bullets)
-    ((Enimies.updateEnimies bullets level.enimies) ++ level.events level.count)
-    level.events
+  if Player.isDead level.player then 
+    reset level 
+  else 
+    Level
+      (level.count + 1)
+      level.cPoly
+      (Player.updatePlayer keyboard level.cPoly level.enimies level.player)
+      (Bullet.updateBullets keyboard (Player.toCharacter level.player) level.enimies level.bullets)
+      ((Enimies.updateEnimies bullets level.enimies) ++ level.events level.count)
+      level.events
     
 
 levelInit : ConnectedPolygon -> (Int -> List(Enimie)) -> Level
@@ -59,8 +56,18 @@ levelInit cPoly events =
     []
     events
 
+reset : Level -> Level
+reset level = 
+  Level 
+    0
+    level.cPoly
+    Player.initPlayer
+    []
+    []
+    level.events
+
 lineWidth : Int
-lineWidth = 3
+lineWidth = 1
 
 shapeColor : Color
 shapeColor = rgb 0 0 255

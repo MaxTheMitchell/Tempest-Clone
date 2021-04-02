@@ -38,7 +38,7 @@ levelsInit =
     levelInit
       (ConnectedPolygon
           20
-          (Poly.equaladeral 3 (Position 0 0) 0.1)
+          (Poly.equaladeral 5 (Position 0.3 0.3) 0.1)
           (Poly.equaladeral 5 (Position 0 0) 0.9))
       (\i -> case i of 
         10 -> [Flipper (Flipper.initFlipper 0)]
@@ -49,6 +49,8 @@ levelsInit =
               ,Flipper (Flipper.initFlipper 2)
               ,Flipper (Flipper.initFlipper 10)
               ]
+        200 -> List.range 0 10
+          |> List.map (\n -> Flipper (Flipper.initFlipper (n*2)))
         _ -> []
       )
   ] 
@@ -70,6 +72,3 @@ fakeLevel =
       (Poly.equaladeral 0 (Position 0 0) 0)     
     )
     (\_ -> [])
-
-lineWidth : Float
-lineWidth = 3

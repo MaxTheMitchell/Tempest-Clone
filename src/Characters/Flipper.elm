@@ -6,40 +6,90 @@ import Shapes.Polygon as Poly
 import Shapes.Line as Line
 
 import Playground exposing(Screen, Color, Shape)
-import Characters.Player exposing (speed)
-type alias Flipper = Character.Character
+
+type Flipper
+  = MoveX Character
+  | MoveY Character
+  | Dying Character
+  | Dead
 
 drawFlipper : Screen -> Int -> ConnectedPolygon -> Flipper -> Shape
 drawFlipper screen lineWidth cPoly flipper =
   let
-    line = Character.characterLine cPoly flipper
+    flipperChacter = toCharacter flipper
+    line = Character.characterLine cPoly flipperChacter
     line2 = Character.characterLine 
       cPoly 
       (Character 
-        flipper.x 
-        (flipper.y - flipper.height) 
-        flipper.height
-        flipper.color)  
+        flipperChacter.x 
+        (flipperChacter.y - flipperChacter.height) 
+        flipperChacter.height
+        flipperChacter.updateCount
+        flipperChacter.updateInterval
+        flipperChacter.color)  
+    poly = [line.pos1 ,line2.pos2 ,line.pos2,line2.pos1]
   in
-    [
-        line.pos1
-        ,line2.pos2
-        , line.pos2
-        ,line2.pos1
-    ]
-      |> (Poly.drawPoly screen flipper.color lineWidth)
+    case flipper of 
+      Dying c -> Character.drawDead screen lineWidth cPoly c
+      _ -> Poly.drawPoly screen flipperChacter.color lineWidth poly
 
-updateFlipper : Flipper -> Flipper
-updateFlipper flipper =
-  Character
-    flipper.x
-    (flipper.y - speed) 
-    flipper.height
-    flipper.color
+updateFlipper : List(Character) -> Flipper -> Flipper
+updateFlipper bullets flipper =
+  let
+    checkedFlipper = if List.any (Character.charactersIntersecting (toCharacter flipper)) bullets
+      then kill flipper
+      else flipper
+  in
+    case checkedFlipper of 
+    MoveY c ->
+      MoveY
+      (Character
+        c.x
+        (bound (c.y - speed)) 
+        c.height
+        c.updateCount
+        c.updateInterval
+        c.color)
+    Dying c -> if Character.shouldUpdate c
+      then Dead
+      else Dying (Character.updateCharacter c)
+    _ -> Dead
 
 initFlipper : Int -> Flipper
 initFlipper x =
-  Character x 1 filpperHeight color
+  MoveY (Character x 1 filpperHeight 1 5 color)
+
+kill : Flipper -> Flipper 
+kill flipper =
+  case flipper of 
+  MoveX c -> Dying c
+  MoveY c -> Dying c
+  Dying _ -> flipper
+  Dead -> Dead
+
+bound : Float -> Float
+bound y =
+  if y < 0 then
+    0
+  else 
+    y
+
+
+dead : Flipper -> Bool
+dead flipper =
+  case flipper of
+  MoveX _ -> False
+  MoveY _ -> False
+  Dying _ -> False
+  Dead -> True 
+
+toCharacter : Flipper -> Character
+toCharacter flipper =
+  case flipper of 
+  MoveX c -> c
+  MoveY c -> c
+  Dying c -> c
+  Dead -> Character.nullCharacter 
 
 speed : Float
 speed = 0.005

@@ -7,14 +7,14 @@ import Shapes.ConnectedPolygon exposing(ConnectedPolygon)
 import Playground exposing(Shape, Screen, Color)
 
 type Enimie
-  = Flipper Character
+  = Flipper Flipper
 
 drawEnimies : Screen -> Int -> ConnectedPolygon -> List(Enimie) -> Shape
 drawEnimies screen lineWidth cPoly enimies =
   enimies
     |> List.map (\e -> 
       case e of 
-      Flipper c -> Flipper.drawFlipper screen lineWidth cPoly c
+      Flipper f -> Flipper.drawFlipper screen lineWidth cPoly f
     )
     |> Playground.group
 
@@ -23,13 +23,9 @@ updateEnimies bullets enimies =
   enimies
     |> List.map (\e ->
       case e of
-      Flipper c -> Flipper (Flipper.updateFlipper c)
+      Flipper c -> Flipper (Flipper.updateFlipper bullets c)
     )
-    |> List.filter 
-      (\e -> not (List.any 
-          (Character.charactersIntersecting (toCharacter e))
-          bullets
-          ))
+    |> List.filter (\e -> not (dead e)) 
 
 toCharacters : List(Enimie) -> List(Character)
 toCharacters = List.map toCharacter
@@ -37,4 +33,9 @@ toCharacters = List.map toCharacter
 toCharacter : Enimie -> Character
 toCharacter enimie =
   case enimie of 
-  Flipper c -> c
+  Flipper c -> Flipper.toCharacter c
+
+dead : Enimie -> Bool
+dead enimie = 
+  case enimie of 
+  Flipper f -> Flipper.dead f
