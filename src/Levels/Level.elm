@@ -14,6 +14,7 @@ import Shapes.Position exposing (Position)
 type alias LevelRecord = 
   {
     count : Int 
+    , completeCount : Int
     , cPoly : ConnectedPolygon
     , player : Player
     , bullets : List(Bullet)
@@ -48,22 +49,20 @@ updateLevel keyboard notUpdatedLevel =
       reset (Level level) 
     else 
       Level
-        {
+        { level |
         count = level.count + 1
-        , cPoly = level.cPoly
         , player = (Player.updatePlayer keyboard level.cPoly level.enimies level.player)
-        , bullets = (Bullet.updateBullets keyboard (Player.toCharacter level.player) level.enimies level.bullets)
+        , bullets = (Bullet.updateBullets keyboard level.count (Player.toCharacter level.player) level.enimies level.bullets)
         , enimies = Enimies.updateEnimies level.bullets level.enimies
-        , updateEvent = level.updateEvent
-        , drawEvents = level.drawEvents
         }
     
 
-levelInit : ConnectedPolygon -> (Level -> Level) -> (Level -> Level) -> Level
-levelInit cPoly updateEvent drawEvents =
+levelInit : Int -> ConnectedPolygon -> (Level -> Level) -> (Level -> Level) -> Level
+levelInit completeCount cPoly updateEvent drawEvents =
   Level
     {
     count = 0
+    ,completeCount = completeCount
     ,cPoly = cPoly
     ,player = Player.initPlayer
     ,bullets = []
@@ -74,11 +73,14 @@ levelInit cPoly updateEvent drawEvents =
 
 reset : Level -> Level
 reset (Level level) = 
-  levelInit level.cPoly level.updateEvent level.drawEvents
+  levelInit level.completeCount level.cPoly level.updateEvent level.drawEvents
 
 finish : Float -> Position -> Level -> Level
 finish percent orgin (Level level) =
   Level {level | cPoly = CPoly.grow percent orgin level.cPoly}
+
+isFinshed : Level -> Bool
+isFinshed (Level level) = level.count >= level.completeCount
 
 addEnimes : List(Enimie) -> Level -> Level
 addEnimes newEnimies (Level level) =

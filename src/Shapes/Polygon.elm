@@ -88,3 +88,15 @@ equaladeral sides center size =
     List.range 0 (sides - 1)
       |> List.map (\i -> Position.rotatePos (angle*(toFloat i)) point)
       |> List.map (\pos -> Position (pos.x*size + center.x) (pos.y*size + center.y)) 
+
+starShape : Int -> Position -> Float -> Polygon
+starShape points center size = 
+  let
+    rotatePoint = Position (center.x + size) center.y 
+    smallerRotatePoint = Line.lineCenter (Line center rotatePoint)
+  in
+  List.range 0 points
+    |> List.map (\i ->
+      Position.rotateAroundPoint ((360/toFloat points)*toFloat i) center 
+      (if modBy 2 i == 0 then rotatePoint else smallerRotatePoint)  
+      )

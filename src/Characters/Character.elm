@@ -40,19 +40,13 @@ onRim character = character.y == 0
 drawDead :  Playground.Screen -> Int -> ConnectedPolygon -> Character -> Shape
 drawDead screen lineWidth cPoly character =
   let
-    points = 25
-    center = Line.lineCenter (characterLine cPoly character)
-    rotatePoint = (characterLine cPoly character).pos1
-    smallerRotatePoint = Line.lineCenter (Line center rotatePoint)
-  in
-  List.range 0 points
-    |> List.map (\i ->
-      Position.rotateAroundPoint ((360/points)*toFloat i) center 
-      (if modBy 2 i == 0 then rotatePoint else smallerRotatePoint)  
-      )
-    |> Poly.drawPoly screen character.color lineWidth
-
-
+    line = characterLine cPoly character
+  in  
+    Poly.starShape 
+      25 
+      (Line.lineCenter line) 
+      ((Line.lineSize line)/2)
+      |> Poly.drawPoly screen character.color lineWidth
 
 nullCharacter : Character 
 nullCharacter = Character 0 0 0 Playground.black

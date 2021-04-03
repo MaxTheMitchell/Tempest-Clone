@@ -25,9 +25,9 @@ drawBullet screen size cPoly bullet =
     Poly.equaladeral 3 (Line.lineCenter line) ((Line.lineSize line)*bullet.height/2) 
       |> (Poly.drawPoly screen bullet.color size)
 
-updateBullets : Playground.Keyboard -> Character -> List(Enimie) -> List(Bullet) -> List(Bullet)
-updateBullets keyboard player enimies bullets =
-    (if isShooting keyboard then
+updateBullets : Playground.Keyboard -> Int -> Character -> List(Enimie) -> List(Bullet) -> List(Bullet)
+updateBullets keyboard levelCount player enimies bullets =
+    (if isShooting keyboard && modBy 5 levelCount == 0 then
         addBullet player bullets
     else
       bullets)
