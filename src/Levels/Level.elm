@@ -9,6 +9,7 @@ import Characters.Bullet as Bullet exposing(Bullet)
 import Characters.Flipper as Flipper
 import Characters.Enimies as Enimies exposing(Enimie)
 import Playground exposing (black)
+import Shapes.Position exposing (Position)
 
 type alias LevelRecord = 
   {
@@ -17,38 +18,49 @@ type alias LevelRecord =
     , player : Player
     , bullets : List(Bullet)
     , enimies : List(Enimie)
-    , events : (Int -> List(Enimie))
+    , updateEvent : (Level -> Level)
+    , drawEvents : (Level -> Level)
     }
 type Level = 
   Level LevelRecord
 
 drawLevel : Screen -> Level -> Shape
-drawLevel screen (Level level) =
-  [
-    CPoly.drawConnectedPoly screen shapeColor lineWidth level.cPoly
-    ,Player.drawPlayer screen lineWidth level.cPoly level.player
-    ,Bullet.drawBullets screen lineWidth level.cPoly level.bullets
-    ,Enimies.drawEnimies screen lineWidth level.cPoly level.enimies
-  ] |> Playground.group
+drawLevel screen notUpdatedLevel =
+  let 
+     level = toRecord ((toRecord notUpdatedLevel).drawEvents notUpdatedLevel)
+  in 
+    [
+      CPoly.drawConnectedPoly screen shapeColor lineWidth level.cPoly
+      ,Player.drawPlayer screen lineWidth level.cPoly level.player
+      ,Bullet.drawBullets screen lineWidth level.cPoly level.bullets
+      ,Enimies.drawEnimies screen lineWidth level.cPoly level.enimies
+    ] |> Playground.group
 
 updateLevel : Keyboard -> Level -> Level
-updateLevel keyboard (Level level) =
-  if Player.isDead level.player then 
-    reset (Level level) 
-  else 
-    Level
-      {
-      count = level.count + 1
-      , cPoly = level.cPoly
-      , player = (Player.updatePlayer keyboard level.cPoly level.enimies level.player)
-      , bullets = (Bullet.updateBullets keyboard (Player.toCharacter level.player) level.enimies level.bullets)
-      , enimies = ((Enimies.updateEnimies level.bullets level.enimies) ++ level.events level.count)
-      , events = level.events
-      }
+updateLevel keyboard notUpdatedLevel =
+  let
+    level = 
+      notUpdatedLevel
+        |> (toRecord notUpdatedLevel).updateEvent 
+        |> toRecord 
+  in  
+    if Player.isDead level.player then 
+      reset (Level level) 
+    else 
+      Level
+        {
+        count = level.count + 1
+        , cPoly = level.cPoly
+        , player = (Player.updatePlayer keyboard level.cPoly level.enimies level.player)
+        , bullets = (Bullet.updateBullets keyboard (Player.toCharacter level.player) level.enimies level.bullets)
+        , enimies = Enimies.updateEnimies level.bullets level.enimies
+        , updateEvent = level.updateEvent
+        , drawEvents = level.drawEvents
+        }
     
 
-levelInit : ConnectedPolygon -> (Int -> List(Enimie)) -> Level
-levelInit cPoly events =
+levelInit : ConnectedPolygon -> (Level -> Level) -> (Level -> Level) -> Level
+levelInit cPoly updateEvent drawEvents =
   Level
     {
     count = 0
@@ -56,12 +68,21 @@ levelInit cPoly events =
     ,player = Player.initPlayer
     ,bullets = []
     ,enimies = []
-    ,events = events
+    ,updateEvent = updateEvent
+    ,drawEvents = drawEvents
     }
 
 reset : Level -> Level
 reset (Level level) = 
-  levelInit level.cPoly level.events
+  levelInit level.cPoly level.updateEvent level.drawEvents
+
+finish : Float -> Position -> Level -> Level
+finish percent orgin (Level level) =
+  Level {level | cPoly = CPoly.grow percent orgin level.cPoly}
+
+addEnimes : List(Enimie) -> Level -> Level
+addEnimes newEnimies (Level level) =
+  Level {level | enimies = newEnimies ++ level.enimies}
 
 toRecord : Level -> LevelRecord
 toRecord (Level record) = record

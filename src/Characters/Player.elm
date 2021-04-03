@@ -51,7 +51,7 @@ updatePlayer keyboard cPoly enimies player =
       else 
         if i > moveInterval then 
           c 
-            |>(moveX (truncate (Playground.toX keyboard)) cPoly)
+            |> (moveX (truncate (Playground.toX keyboard)) cPoly)
             |> (\ch -> Alive ch 0)
         else 
           Alive c (if (Playground.toX keyboard)== 0 then moveInterval else i+1 )
@@ -85,19 +85,23 @@ moveX dir cPoly player =
   player.height
   player.color
 
-moveY : Int -> Character -> Character
-moveY dir player = 
-  Character
-    player.x
-    (
-      dir
-        |> toFloat 
-        |> (*) speed
-        |> (+) player.y
-        |> (bound 0 1)
-    )
-    player.height
-    player.color
+moveY : Int -> Float -> Player -> Player
+moveY dir speed playerType = 
+ let
+     player = toCharacter playerType
+ in
+  Alive 
+    (Character
+      player.x
+      (
+        dir
+          |> toFloat 
+          |> (*) speed
+          |> (+) player.y
+          |> (bound 0 1)
+      )
+      player.height
+      player.color) 0
 
 isDead : Player -> Bool
 isDead player =
@@ -115,9 +119,6 @@ toCharacter player =
 
 playerSize : Float
 playerSize = 0.2
-
-speed : Float
-speed = 0.1
 
 color : Color
 color = Playground.yellow

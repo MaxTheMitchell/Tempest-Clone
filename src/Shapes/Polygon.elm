@@ -15,9 +15,9 @@ drawPoly screen color lineWidth poly =
     |> List.map (Line.drawLine screen color lineWidth)
     |> Playground.group
 
-grow : Float -> Polygon -> Polygon
-grow percent poly =
-  List.map (Position.grow percent) poly
+grow : Float -> Position -> Polygon  -> Polygon
+grow percent orgin poly =
+  List.map (Position.grow percent orgin) poly
 
 toLines : Polygon -> List(Line)
 toLines poly = 
