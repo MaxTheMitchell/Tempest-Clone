@@ -49,19 +49,20 @@ posOnPeremeter percent poly =
         tail = (Maybe.withDefault [] (List.tail lines))
       in 
         case List.head lines of 
-        Nothing -> (Position 0 0)
-        Just head ->
-          if (Line.lineSize head) >= len then 
-            Line.positionOnLine 
-              (perc * (1 / ((Line.lineSize head) / (Line.sumLines lines))))
-              head
-          else 
-            realFunc 
-              ((len - (Line.lineSize head)) /(Line.sumLines tail) )
-              tail
+          Nothing -> (Position 0 0)
+          Just head ->
+            if (Line.lineSize head) >= len then 
+              Line.positionOnLine 
+                (perc * (1 / ((Line.lineSize head) / (Line.sumLines lines))))
+                head
+            else 
+              realFunc 
+                ((len - (Line.lineSize head)) /(Line.sumLines tail) )
+                tail
   in
     poly
       |> toLines
+      |> List.filter (\line -> Line.lineSize line /= 0) 
       |> (realFunc percent)
 
 peremeter : Polygon -> Float
